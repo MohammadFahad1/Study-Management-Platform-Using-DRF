@@ -3,7 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
 from study_materials.models import FlashCard, FlashCardItem, Quiz, QuizQuestion, Matching, MatchingItem, Note
 from user.models import User, OTP
-from study_materials.serializers import FlashCardSerializer, FlashCardItemSerializer, QuizSerializer, QuizQuestionSerializer, MatchingSerializer, MatchingItemSerializer, NoteSerializer, ForgotPasswordSerializer
+from study_materials.serializers import FlashCardSerializer, FlashCardItemSerializer, QuizSerializer, QuizQuestionSerializer, MatchingSerializer, MatchingItemSerializer, NoteSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, VerifyOTPSerializer
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -49,7 +49,7 @@ class ForgotPasswordView(GenericAPIView):
         }, status=200)
     
 class VerifyOTPView(GenericAPIView):
-    serializer_class = ForgotPasswordSerializer
+    serializer_class = VerifyOTPSerializer
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
@@ -60,8 +60,6 @@ class VerifyOTPView(GenericAPIView):
         user = get_object_or_404(User, email=email)
         otp_obj = OTP.objects.filter(user=user, code=otp, is_used=False).first()
         if otp_obj:
-            otp_obj.is_used = True
-            otp_obj.save()
             return Response({
                 'message': 'OTP verified successfully.'
             }, status=200)
@@ -70,7 +68,33 @@ class VerifyOTPView(GenericAPIView):
                 'message': 'Invalid OTP.'
             }, status=400)
 
+class ResetPasswordView(GenericAPIView):
+    serializer_class = ResetPasswordSerializer
+    permission_classes = [AllowAny]
 
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data.get('email')
+        otp = serializer.validated_data.get('otp')
+        new_password = serializer.validated_data.get('new_password')
+
+        user = get_object_or_404(User, email=email)
+        otp_obj = OTP.objects.filter(user=user, code=otp, is_used=False).first()
+
+        if otp_obj:
+            otp_obj.is_used = True
+            user.set_password(new_password)
+            user.save()
+            otp_obj.save()
+            return Response({
+                'message': 'Password has been reset successfully.'
+            }, status=200)
+        else:
+            return Response({
+                'message': 'Invalid OTP.'
+            }, status=400)
 
 class FlashCardViewSet(ModelViewSet):
     serializer_class = FlashCardSerializer

@@ -10,6 +10,11 @@ class VerifyOTPSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255, required=True)
     otp = serializers.CharField(max_length=6, required=True)
 
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255, required=True)
+    otp = serializers.CharField(max_length=6, required=True)
+    new_password = serializers.CharField(max_length=128, required=True)
+
 class FlashCardItemSerializer(ModelSerializer):
     class Meta:
         model = FlashCardItem
