@@ -23,6 +23,7 @@ urlpatterns = [
     path('', include(flashcard_router.urls)),
     path('', include(quizzes_router.urls)),
     path('', include(matching_router.urls)),
+    path('', include('study_materials.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt'))
 ]

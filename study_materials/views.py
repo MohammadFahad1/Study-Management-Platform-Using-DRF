@@ -1,11 +1,53 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import GenericAPIView
 from study_materials.models import FlashCard, FlashCardItem, Quiz, QuizQuestion, Matching, MatchingItem, Note
-from study_materials.serializers import FlashCardSerializer, FlashCardItemSerializer, QuizSerializer, QuizQuestionSerializer, MatchingSerializer, MatchingItemSerializer, NoteSerializer
+from user.models import User, OTP
+from study_materials.serializers import FlashCardSerializer, FlashCardItemSerializer, QuizSerializer, QuizQuestionSerializer, MatchingSerializer, MatchingItemSerializer, NoteSerializer, ForgotPasswordSerializer
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from study_materials.filters import FlashCardFilter, QuizFilter
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.conf import settings
+from rest_framework.response import Response
+import random
+import datetime
+from rest_framework.permissions import AllowAny
+
+class ForgotPasswordView(GenericAPIView):
+    serializer_class = ForgotPasswordSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serilaizer = self.serializer_class(data=request.data)
+        serilaizer.is_valid(raise_exception=True)
+
+        email = serilaizer.validated_data['email']
+        user = get_object_or_404(User, email=email)
+        otp = str(random.randint(100000, 999999))
+        print(otp)
+        payload = {
+            'user': user,
+            'code': otp,
+            'expires_at': datetime.datetime.now() + datetime.timedelta(minutes=5),
+            'is_used': False,
+        }
+
+        OTP.objects.create(**payload)
+
+        send_mail(
+            'OTP for Password Reset - Study Management Platform',
+            f'Your OTP for password reset is: {otp}. This OTP is valid for 5 minutes.',
+            settings.EMAIL_HOST_USER,
+            [user.email],
+        )
+        return Response({
+            'message': 'OTP has been sent to your email address.'
+        }, status=200)
+
 
 class FlashCardViewSet(ModelViewSet):
     serializer_class = FlashCardSerializer

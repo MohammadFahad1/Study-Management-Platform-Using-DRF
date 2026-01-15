@@ -1,5 +1,10 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from study_materials.models import FlashCard, FlashCardItem, Quiz, QuizQuestion, Matching, MatchingItem, Note
+from user.models import OTP
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255, required=True)
 
 class FlashCardItemSerializer(ModelSerializer):
     class Meta:
