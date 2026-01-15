@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from study_materials.models import FlashCard, FlashCardItem, Quiz, QuizQuestion, Matching, MatchingItem, Note
-from study_materials.serializers import FlashCardSerializer, FlashCardItemSerializer
+from study_materials.serializers import FlashCardSerializer, FlashCardItemSerializer, QuizSerializer, QuizQuestionSerializer
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -34,3 +34,13 @@ class FlashCardItemViewSet(ModelViewSet):
         if self.request.user != FlashCard.objects.get(pk=self.kwargs['flashcard_pk']).user:
             raise PermissionDenied("You do not have permission to add items to this flashcard.")
         serializer.save(flash_card_id=self.kwargs['flashcard_pk'])
+
+
+class QuizViewSet(ModelViewSet):
+    serializer_class = QuizSerializer
+
+    def get_queryset(self):
+        return Quiz.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
