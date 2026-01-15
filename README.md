@@ -8,7 +8,7 @@ The API endpoint documentation can be accessed from the [http://127.0.0.1:8000/s
 
 ## Setup
 
-1. Clone the repository: `git clone https://github.com/fahadbd/study-management-platform.git`
+1. Clone the repository: `git clone https://github.com/MohammadFahad1/Study-Management-Platform-Using-DRF.git`
 2. Install the required packages: `pip install -r requirements.txt`
 3. Create a new database: `python manage.py migrate`
 4. Create a superuser: `python manage.py createsuperuser`
@@ -25,8 +25,11 @@ The following environment variables are required to run the application:
 - `EMAIL_HOST_PASSWORD`: The password to use when sending emails.
 
 Example:
+
+```
 EMAIL_HOST=smtp.gmail.com
 EMAIL_USE_TLS=True
 EMAIL_PORT=587
 EMAIL_HOST_USER=your_email_here
 EMAIL_HOST_PASSWORD=password_here
+```
