@@ -11,3 +11,15 @@ class FlashCardSerializer(ModelSerializer):
         model = FlashCard
         fields = ['id', 'user', 'title', 'items', 'created_at', 'updated_at']
         read_only_fields = ['user', 'created_at', 'updated_at']
+
+class QuizQuestionSerializer(ModelSerializer):
+    class Meta:
+        model = QuizQuestion
+        fields = ['id', 'question', 'answer', 'rationale', 'option_a', 'option_b', 'option_c', 'option_d']
+
+class QuizSerializer(ModelSerializer):
+    questions = QuizQuestionSerializer(many=True, read_only=True)
+    class Meta:
+        model = Quiz
+        fields = ['id', 'user', 'title', 'questions', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'created_at', 'updated_at']

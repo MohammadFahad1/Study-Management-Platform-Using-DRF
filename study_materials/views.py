@@ -5,9 +5,14 @@ from study_materials.serializers import FlashCardSerializer, FlashCardItemSerial
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from study_materials.filters import FlashCardFilter
 
 class FlashCardViewSet(ModelViewSet):
     serializer_class = FlashCardSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = FlashCardFilter
+    search_fields = ['question', 'answer']
+    ordering_fields = ['created_at', 'updated_at']
 
     def get_queryset(self):
         return FlashCard.objects.filter(user=self.request.user)
@@ -17,10 +22,6 @@ class FlashCardViewSet(ModelViewSet):
 
 class FlashCardItemViewSet(ModelViewSet):
     serializer_class = FlashCardItemSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = ['question', 'answer']
-    ordering_fields = ['created_at', 'updated_at']
-    # filterset_fields = ['question', 'answer']
 
     def get_queryset(self):
         if 'flashcard_pk' in self.kwargs:
