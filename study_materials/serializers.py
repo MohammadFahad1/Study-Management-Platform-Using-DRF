@@ -6,6 +6,10 @@ from user.models import OTP
 class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255, required=True)
 
+class VerifyOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255, required=True)
+    otp = serializers.CharField(max_length=6, required=True)
+
 class FlashCardItemSerializer(ModelSerializer):
     class Meta:
         model = FlashCardItem

@@ -47,6 +47,29 @@ class ForgotPasswordView(GenericAPIView):
         return Response({
             'message': 'OTP has been sent to your email address.'
         }, status=200)
+    
+class VerifyOTPView(GenericAPIView):
+    serializer_class = ForgotPasswordSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)    
+        email = serializer.validated_data.get('email')
+        otp = serializer.validated_data.get('otp')
+        user = get_object_or_404(User, email=email)
+        otp_obj = OTP.objects.filter(user=user, code=otp, is_used=False).first()
+        if otp_obj:
+            otp_obj.is_used = True
+            otp_obj.save()
+            return Response({
+                'message': 'OTP verified successfully.'
+            }, status=200)
+        else:
+            return Response({
+                'message': 'Invalid OTP.'
+            }, status=400)
+
 
 
 class FlashCardViewSet(ModelViewSet):
