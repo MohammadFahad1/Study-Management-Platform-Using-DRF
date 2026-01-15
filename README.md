@@ -10,9 +10,10 @@ The API endpoint documentation can be accessed from the [http://127.0.0.1:8000/s
 
 1. Clone the repository: `git clone https://github.com/MohammadFahad1/Study-Management-Platform-Using-DRF.git`
 2. Install the required packages: `pip install -r requirements.txt`
-3. Create a new database: `python manage.py migrate`
-4. Create a superuser: `python manage.py createsuperuser`
-5. Run the development server: `python manage.py runserver`
+3. Generate the database migrations: `python manage.py makemigrations`
+4. Create a new database: `python manage.py migrate`
+5. Create a superuser: `python manage.py createsuperuser`
+6. Run the development server: `python manage.py runserver`
 
 ## Environment Variables
 
