@@ -5,7 +5,7 @@ from study_materials.serializers import FlashCardSerializer, FlashCardItemSerial
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from study_materials.filters import FlashCardFilter
+from study_materials.filters import FlashCardFilter, QuizFilter
 
 class FlashCardViewSet(ModelViewSet):
     serializer_class = FlashCardSerializer
@@ -38,9 +38,28 @@ class FlashCardItemViewSet(ModelViewSet):
 
 class QuizViewSet(ModelViewSet):
     serializer_class = QuizSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = QuizFilter
+    search_fields = ['title']
+    ordering_fields = ['created_at', 'updated_at']
 
     def get_queryset(self):
         return Quiz.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class QuizQuestionViewSet(ModelViewSet):
+    serializer_class = QuizQuestionSerializer
+
+    def get_queryset(self):
+        if 'quiz_pk' in self.kwargs:
+            quiz = Quiz.objects.get(pk=self.kwargs['quiz_pk'])
+            if quiz.user != self.request.user:
+                raise PermissionDenied("You do not have permission to view questions for this quiz.")
+        return QuizQuestion.objects.filter(quiz=self.kwargs['quiz_pk'])
+    
+    def perform_create(self, serializer):
+        if self.request.user != Quiz.objects.get(pk=self.kwargs['quiz_pk']).user:
+            raise PermissionDenied("You do not have permission to add questions to this quiz.")
+        serializer.save(quiz_id=self.kwargs['quiz_pk'])
