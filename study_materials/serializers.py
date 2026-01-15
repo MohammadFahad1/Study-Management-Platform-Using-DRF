@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from study_materials.models import FlashCard, FlashCardItem, Quiz, QuizQuestion, QuizQuestionOption, Matching, MatchingItem, Note
+from study_materials.models import FlashCard, FlashCardItem, Quiz, QuizQuestion, Matching, MatchingItem, Note
 
 class FlashCardItemSerializer(ModelSerializer):
     class Meta:

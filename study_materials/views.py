@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
-from study_materials.models import FlashCard, FlashCardItem, Quiz, QuizQuestion, QuizQuestionOption, Matching, MatchingItem, Note
+from study_materials.models import FlashCard, FlashCardItem, Quiz, QuizQuestion, Matching, MatchingItem, Note
 from study_materials.serializers import FlashCardSerializer, FlashCardItemSerializer
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
