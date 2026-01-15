@@ -23,3 +23,15 @@ class QuizSerializer(ModelSerializer):
         model = Quiz
         fields = ['id', 'user', 'title', 'questions', 'created_at', 'updated_at']
         read_only_fields = ['user', 'created_at', 'updated_at']
+
+class MatchingItemSerializer(ModelSerializer):
+    class Meta:
+        model = MatchingItem
+        fields = ['id', 'term', 'definition']
+
+class MatchingSerializer(ModelSerializer):
+    items = MatchingItemSerializer(many=True, read_only=True)
+    class Meta:
+        model = Matching
+        fields = ['id', 'user', 'title', 'items', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'created_at', 'updated_at']
