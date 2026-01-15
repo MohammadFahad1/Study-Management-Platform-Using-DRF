@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from study_materials.models import FlashCard, FlashCardItem, Quiz, QuizQuestion, Matching, MatchingItem, Note
-from study_materials.serializers import FlashCardSerializer, FlashCardItemSerializer, QuizSerializer, QuizQuestionSerializer, MatchingSerializer, MatchingItemSerializer
+from study_materials.serializers import FlashCardSerializer, FlashCardItemSerializer, QuizSerializer, QuizQuestionSerializer, MatchingSerializer, MatchingItemSerializer, NoteSerializer
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -88,3 +88,12 @@ class MatchingItemViewSet(ModelViewSet):
         if self.request.user != Matching.objects.get(pk=self.kwargs['matching_pk']).user:
             raise PermissionDenied("You do not have permission to add items to this matching.")
         serializer.save(matching_id=self.kwargs['matching_pk'])
+
+class NoteViewSet(ModelViewSet):
+    serializer_class = NoteSerializer
+
+    def get_queryset(self):
+        return Note.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

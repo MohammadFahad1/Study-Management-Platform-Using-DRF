@@ -1,11 +1,12 @@
 from django.urls import path, include
 from rest_framework_nested import routers
-from study_materials.views import FlashCardViewSet, FlashCardItemViewSet, QuizViewSet, QuizQuestionViewSet, MatchingViewSet, MatchingItemViewSet
+from study_materials.views import FlashCardViewSet, FlashCardItemViewSet, QuizViewSet, QuizQuestionViewSet, MatchingViewSet, MatchingItemViewSet, NoteViewSet
 
 router = routers.DefaultRouter()
 router.register('flashcards', FlashCardViewSet, basename='flashcards')
 router.register('quizzes', QuizViewSet, basename='quizzes')
 router.register('matchings', MatchingViewSet, basename='matchings')
+router.register('notes', NoteViewSet, basename='notes')
 
 flashcard_router = routers.NestedDefaultRouter(router, 'flashcards', lookup='flashcard')
 flashcard_router.register('items', FlashCardItemViewSet, basename='flashcard-items')

@@ -35,3 +35,9 @@ class MatchingSerializer(ModelSerializer):
         model = Matching
         fields = ['id', 'user', 'title', 'items', 'created_at', 'updated_at']
         read_only_fields = ['user', 'created_at', 'updated_at']
+
+class NoteSerializer(ModelSerializer):
+    class Meta:
+        model = Note
+        fields = ['id', 'user', 'title', 'subtitle', 'note', 'notesubtitle', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'created_at', 'updated_at']
